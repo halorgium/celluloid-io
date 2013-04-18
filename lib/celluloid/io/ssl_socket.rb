@@ -26,6 +26,7 @@ module Celluloid
         @socket.accept_nonblock
         self
       rescue ::IO::WaitReadable
+        Celluloid.logger.info "accept for #{@socket.inspect}, task: #{Task.current.inspect}"
         wait_readable
         retry
       rescue ::IO::WaitWritable

@@ -20,7 +20,7 @@ module Celluloid
   module IO
     def self.included(klass)
       klass.send :include, Celluloid
-      klass.reactor_classes << Celluloid::IO::Reactor
+      klass.reactor_class  Celluloid::IO::Reactor
     end
 
     def self.reactor

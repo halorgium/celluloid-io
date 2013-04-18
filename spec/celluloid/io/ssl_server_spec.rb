@@ -33,8 +33,10 @@ describe Celluloid::IO::SSLServer do
         with_ssl_server do |subject|
           thread = Thread.new do
             raw = TCPSocket.new(example_addr, example_ssl_port)
+            Celluloid.logger.info "evented? #{Celluloid::IO.evented?}"
             ssl = OpenSSL::SSL::SSLSocket.new(raw, client_context).connect
           end
+          Celluloid.logger.info "subject: #{subject.inspect}"
           peer = within_io_actor { subject.accept }
           peer.should be_a Celluloid::IO::SSLSocket
 

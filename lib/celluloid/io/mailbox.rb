@@ -1,3 +1,4 @@
+__END__
 module Celluloid
   module IO
     # An alternative implementation of Celluloid::Mailbox using Reactor
