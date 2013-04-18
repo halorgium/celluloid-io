@@ -1,3 +1,4 @@
+require 'pry'
 require 'nio'
 
 module Celluloid
@@ -16,6 +17,12 @@ module Celluloid
         @selector = NIO::Selector.new
       end
 
+      def register(thread)
+        #binding.pry
+        thread[:celluloid_io_reactor] = self
+        #binding.pry
+      end
+
       # Wait for the given IO object to become readable
       def wait_readable(io)
         wait io, :r
@@ -28,6 +35,7 @@ module Celluloid
 
       # Wait for the given IO operation to complete
       def wait(io, set)
+        Celluloid.logger.info "waiting for io: #{io.inspect}: #{set.inspect}"
         # zomg ugly type conversion :(
         unless io.is_a?(::IO) or io.is_a?(OpenSSL::SSL::SSLSocket)
           if io.respond_to? :to_io
@@ -46,6 +54,7 @@ module Celluloid
 
       # Run the reactor, waiting for events or wakeup signal
       def run_once(timeout = nil)
+        Celluloid.logger.info "running reactor with timeout: #{timeout.inspect}"
         @selector.select(timeout) do |monitor|
           task = monitor.value
           monitor.close

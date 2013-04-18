@@ -6,7 +6,7 @@ require 'coveralls'
 Coveralls.wear!
 
 logfile = File.open(File.expand_path("../../log/test.log", __FILE__), 'a')
-Celluloid.logger = Logger.new(logfile)
+#Celluloid.logger = Logger.new(logfile)
 
 RSpec.configure do |config|
   config.before do
@@ -45,7 +45,7 @@ def within_io_actor(&block)
   actor = ExampleActor.new
   actor.wrap(&block)
 ensure
-  actor.terminate if actor.alive?
+  actor.terminate if actor && actor.alive?
 end
 
 def with_tcp_server

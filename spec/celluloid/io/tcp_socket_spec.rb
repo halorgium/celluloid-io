@@ -20,7 +20,7 @@ describe Celluloid::IO::TCPSocket do
 
     it "should be evented" do
       with_connected_sockets do |subject|
-        within_io_actor { Celluloid::IO.evented? }.should be_true
+        within_io_actor { binding.pry; Celluloid::IO.evented? }.should be_true
       end
     end
 

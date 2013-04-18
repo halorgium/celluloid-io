@@ -20,19 +20,21 @@ module Celluloid
   module IO
     def self.included(klass)
       klass.send :include, Celluloid
-      klass.mailbox_class Celluloid::IO::Mailbox
+      klass.reactor_classes << Celluloid::IO::Reactor
+    end
+
+    def self.reactor
+      Thread.current[:celluloid_io_reactor]
     end
 
     def self.evented?
-      actor = Thread.current[:celluloid_actor]
-      actor && actor.mailbox.is_a?(Celluloid::IO::Mailbox)
+      !!reactor
     end
 
     def wait_readable(io)
       io = io.to_io
-      if IO.evented?
-        mailbox = Thread.current[:celluloid_mailbox]
-        mailbox.reactor.wait_readable(io)
+      if IO.reactor
+        IO.reactor.wait_readable(io)
       else
         Kernel.select([io])
       end
@@ -42,9 +44,8 @@ module Celluloid
 
     def wait_writable(io)
       io = io.to_io
-      if IO.evented?
-        mailbox = Thread.current[:celluloid_mailbox]
-        mailbox.reactor.wait_writable(io)
+      if IO.reactor
+        IO.reactor.wait_writable(io)
       else
         Kernel.select([], [io])
       end
